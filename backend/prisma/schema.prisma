@@ -1,0 +1,96 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model User {
+    id              Int         @id @default(autoincrement())
+    firstname       String
+    lastname        String
+    email           String      @unique
+    hashedPassword  String
+    refreshToken    String?
+
+    cart            Cart?
+
+    orders          Order[]
+}
+
+model Variant {
+    id              Int    @id @default(autoincrement())
+    size            String
+    stock           Int
+
+    itemId          Int
+    item            Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+    @@unique([itemId, size])
+}
+
+model Item {
+    id              Int         @id @default(autoincrement())
+    name            String
+    description     String
+    gender          String
+    category        String
+    color           String
+    price           Float
+    imageUrl        String
+    popularity      Int         @default(0)
+
+    variants        Variant[]
+    cartItems       CartItem[]
+    orderItems      OrderItem[]
+}
+
+model CartItem {
+    id              Int         @id @default(autoincrement())
+
+    size            String
+    price           Float
+    quantity        Int
+
+    cartId          Int
+    cart            Cart        @relation(fields: [cartId], references: [id], onDelete: Cascade)
+    itemId          Int
+    item            Item        @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+model Cart {
+    id              Int         @id @default(autoincrement())
+    bill            Float
+
+    userId          Int         @unique
+    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    items           CartItem[]
+}
+
+model OrderItem {
+    id              Int         @id @default(autoincrement())
+    size            String
+    price           Float
+    quantity        Int
+
+    orderId         Int
+    order           Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    itemId          Int?
+    item            Item?       @relation(fields: [itemId], references: [id], onDelete: SetNull)
+}
+
+model Order {
+    id              Int         @id @default(autoincrement())
+    amount          Float
+    address         String
+    status          String
+    paymentType     String
+    isPaid          Boolean
+
+    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId          Int
+
+    items           OrderItem[]
+}
