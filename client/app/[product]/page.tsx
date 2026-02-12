@@ -10,7 +10,5 @@ export default async function Page({ params }: { params: { product: string }; })
 
     const item = await data.json();
 
-    console.log("product id page:", product);
-
     return <ProductPage product={item} />;
 }

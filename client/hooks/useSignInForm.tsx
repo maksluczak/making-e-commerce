@@ -35,7 +35,6 @@ export const useSignInForm = () => {
             }
 
             const result = await response.json();
-            console.log("Zalogowano pomyślnie!", result);
             login(result.body.accessToken);
 
             form.reset();

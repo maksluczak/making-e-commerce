@@ -16,7 +16,6 @@ export default function ProductPage({ product }: { product: ProductType }) {
     const { isAuthenticated } = useAuth();
 
     function submitHandler() {
-        console.log("submit");
         if (!isAuthenticated) {
             router.push("/logowanie");
             return;
@@ -64,7 +63,6 @@ export default function ProductPage({ product }: { product: ProductType }) {
                                     <button
                                         onClick={(e) => {
                                             if (!stock) return;
-                                            console.log("size", s);
                                             setSize(s);
                                         }}
                                         className={`border-r border-b border-black h-12 w-full flex items-center justify-center cursor-pointer  transition-all text-sm font-medium ${
