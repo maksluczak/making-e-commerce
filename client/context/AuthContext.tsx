@@ -1,15 +1,10 @@
 "use client";
-import {
-    createContext,
-    useContext,
-    useState,
-    ReactNode,
-    useEffect,
-} from "react";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { setCookie, getCookie, deleteCookie } from "cookies-next";
-import { User, JwtPayload } from "@/types/auth.types";
+import { User, JwtPayload, RefreshResponse } from "@/types/auth.types";
+import { apiClient } from "@/hooks/client";
 
 type AuthContextType = {
     user: User | null;
@@ -37,25 +32,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const refreshAccessToken = async () => {
         try {
-            const response = await fetch(
-                "http://localhost:8080/api/v1/auth/refresh",
-                {
-                    method: "POST",
-                    credentials: "include",
-                },
-            );
+            const response = await apiClient.post<RefreshResponse>("/auth/refresh");
 
-            if (!response.ok) {
-                await logout();
-                return;
-            }
-
-            const { accessToken } = await response.json();
-            login(accessToken, false);
+            login(response.accessToken, false);
         } catch (err) {
             console.error("Błąd odświeżania tokena", err);
         }
     };
+
     useEffect(() => {
         const savedToken = getCookie("access_token");
         if (savedToken) {
@@ -91,12 +75,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const logout = async () => {
         try {
-            await fetch("http://localhost:8080/api/v1/auth/logout", {
-                method: "POST",
-                credentials: "include",
-            });
+            await apiClient.post<void>("/auth/logout");
         } catch (err) {
-            console.error("Backend logout error (prawdopodobnie brak endpointu):", err );
+            console.error("Backend logout error:", err );
         } finally {
             deleteCookie("access_token", { path: "/" });
             setUser(null);
@@ -117,4 +98,4 @@ export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) throw new Error("useAuth must be used within AuthProvider");
     return context;
-};
+}
