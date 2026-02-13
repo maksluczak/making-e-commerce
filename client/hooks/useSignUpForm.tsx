@@ -3,11 +3,13 @@ import { z } from "zod";
 import { signUpSchema } from "@/schemas/signUpSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { apiClient } from "@/hooks/client"
 
 export type SignUpData = z.infer<typeof signUpSchema>;
 
 export const useSignUpForm = () => {
     const router = useRouter();
+
     const form = useForm<SignUpData>({
         resolver: zodResolver(signUpSchema),
         defaultValues: {
@@ -20,23 +22,7 @@ export const useSignUpForm = () => {
 
     const onSubmit = async (data: SignUpData) => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_URL}/api/v1/auth/register`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data),
-                },
-            );
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Błąd podczas rejestracji");
-            }
-
-            const result = await response.json();
+            await apiClient.post<void>("/auth/register", data);
 
             form.reset();
             router.push("/logowanie");
@@ -45,10 +31,10 @@ export const useSignUpForm = () => {
                 message: error.message || "Serwer nie odpowiada",
             });
         }
-    };
+    }
 
     return {
         ...form,
         onSubmit: form.handleSubmit(onSubmit),
-    };
-};
+    }
+}

@@ -8,6 +8,13 @@ export interface JwtPayload {
     email: string;
 }
 
+export interface LoginResponse {
+    message: string;
+    body: {
+        accessToken: string;
+    }
+}
+
 export interface RefreshResponse {
     accessToken: string;
 }
