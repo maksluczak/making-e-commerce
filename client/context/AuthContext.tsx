@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(null);
             deleteCookie("access_token");
         }
-    };
+    }
 
     const refreshAccessToken = async () => {
         try {
@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch (err) {
             console.error("Błąd odświeżania tokena", err);
         }
-    };
+    }
 
     useEffect(() => {
         const savedToken = getCookie("access_token");
@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             router.push("/");
         }
         router.refresh();
-    };
+    }
 
     const logout = async () => {
         try {
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             router.push("/logowanie");
             router.refresh();
         }
-    };
+    }
 
     return (
         <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }} >
