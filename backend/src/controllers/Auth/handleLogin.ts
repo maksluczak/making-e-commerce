@@ -63,4 +63,4 @@ export const handleLogin = async ( req: Request, res: Response ): Promise<Respon
     } catch (err) {
         res.status(400).json({ message: "Error in signing in", body: err });
     }
-};
+}
