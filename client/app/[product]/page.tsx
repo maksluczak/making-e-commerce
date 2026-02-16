@@ -1,14 +1,17 @@
 import ProductPage from "@/components/Shopping/ProductPage";
+import { apiClient } from "@/services/api-client";
+import { ProductType } from "@/types/cart.types";
 
-export default async function Page({ params }: { params: { product: string }; }) {
+export default async function Page({ params }: {
+    params: Promise<{ product: string }>;
+}) {
     const { product } = await params;
 
-    const data = await fetch(`${process.env.API_URL}/item/${product}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    });
+    const item = await apiClient.get<ProductType>(`/item/${product}`);
 
-    const item = await data.json();
+    if (!item) {
+        return <div>Nie znaleziono produktu.</div>;
+    }
 
     return <ProductPage product={item} />;
 }

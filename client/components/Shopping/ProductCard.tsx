@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { ProductType } from "@/types/cart.types";
+import { apiClient } from "@/services/api-client";
 
 export default function ProductCard({ product }: { product: ProductType }) {
     return (
@@ -8,7 +9,7 @@ export default function ProductCard({ product }: { product: ProductType }) {
             <div className="h-60 overflow-hidden flex items-center justify-center border-b border-black">
                 <img
                     className="block h-full"
-                    src={`${process.env.NEXT_PUBLIC_URL}/${product.imageUrl}`}
+                    src={apiClient.getImageUrl(product.imageUrl)}
                     alt={product.name}
                 />
             </div>

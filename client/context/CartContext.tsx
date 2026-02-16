@@ -1,12 +1,7 @@
 "use client";
-import {
-    createContext,
-    useContext,
-    useState,
-    ReactNode,
-    useEffect,
-} from "react";
+import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from "react";
 import { ProductType } from "@/types/cart.types";
+import { apiClient } from "@/services/api-client";
 import { getCookie } from "cookies-next";
 
 interface BackendCartProductFetch extends Omit<ProductType, "variants"> {
@@ -23,14 +18,16 @@ export interface BackendCartItemFetch {
     size: string;
 }
 
+interface CartResponse {
+    body: {
+        items: BackendCartItemFetch[];
+    };
+}
+
 interface CartContextType {
     items: BackendCartItemFetch[];
     addToCart: (product: ProductType, size: string) => Promise<void>;
-    updateQuantity: (
-        itemId: number,
-        size: string,
-        quantity: number,
-    ) => Promise<void>;
+    updateQuantity: (itemId: number, size: string, quantity: number) => Promise<void>;
     totalPrice: number;
     itemsCount: number;
     isLoading: boolean;
@@ -43,103 +40,54 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const [items, setItems] = useState<BackendCartItemFetch[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    const fetchCart = async () => {
+    const fetchCart = useCallback(async () => {
         const token = getCookie("access_token");
         if (!token) return;
 
         setIsLoading(true);
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_URL}/api/v1/cart`,
-                {
-                    method: "GET",
-                    headers: { Authorization: `Bearer ${token}` },
-                    credentials: "include",
-                },
-            );
-
-            if (response.ok) {
-                const result = await response.json();
-                setItems(result.body.items || []);
-            }
+            const result = await apiClient.get<CartResponse>("/cart");
+            setItems(result?.body?.items || []);
         } catch (err) {
             console.error("Błąd pobierania koszyka:", err);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
     const addToCart = async (product: ProductType, size: string) => {
         try {
-            const token = getCookie("access_token");
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_URL}/api/v1/cart`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    credentials: "include",
-                    body: JSON.stringify({
-                        itemId: product.id,
-                        size: size,
-                        quantity: 1,
-                    }),
-                },
-            );
-
-            if (response.ok) {
-                await fetchCart();
-            }
+            await apiClient.post("/cart", {
+                itemId: product.id,
+                size: size,
+                quantity: 1,
+            });
+            await fetchCart();
         } catch (err) {
-            console.error("Błąd sieciowy przy dodawaniu:", err);
+            console.error("Błąd przy dodawaniu do koszyka:", err);
         }
     };
 
-    const updateQuantity = async ( itemId: number, size: string, quantity: number ) => {
-        const token = getCookie("access_token");
-        if (!token) return;
-
-        const finalQuantity = quantity < 0 ? 0 : quantity;
-
+    const updateQuantity = async (itemId: number, size: string, quantity: number) => {
+        const finalQuantity = Math.max(0, quantity);
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_URL}/api/v1/cart`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    credentials: "include",
-                    body: JSON.stringify({
-                        itemId: itemId,
-                        size: size,
-                        quantity: finalQuantity,
-                    }),
-                },
-            );
-
-            if (response.ok) {
-                await fetchCart();
-            } else {
-                console.error("Błąd aktualizacji koszyka");
-            }
+            await apiClient.patch("/cart", {
+                itemId,
+                size,
+                quantity: finalQuantity,
+            });
+            await fetchCart();
         } catch (err) {
-            console.error("Błąd sieciowy przy updateQuantity:", err);
+            console.error("Błąd aktualizacji koszyka:", err);
         }
     };
 
-    const totalPrice = items.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0,
-    );
+    const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const itemsCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
     useEffect(() => {
         fetchCart();
-    }, []);
+    }, [fetchCart]);
 
     return (
         <CartContext.Provider value={{ items, addToCart, updateQuantity, totalPrice, itemsCount, isLoading, fetchCart }}>

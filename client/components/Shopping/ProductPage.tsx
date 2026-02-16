@@ -6,6 +6,7 @@ import { ProductType } from "@/types/cart.types";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import {apiClient} from "@/services/api-client";
 
 export default function ProductPage({ product }: { product: ProductType }) {
     const { id, name, description, gender, category, color, price, imageUrl, variants } = product;
@@ -33,7 +34,7 @@ export default function ProductPage({ product }: { product: ProductType }) {
             <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 border-l border-t border-black">
                 <section className="border-r border-black flex items-center justify-center overflow-hidden">
                     <img
-                        src={`${process.env.NEXT_PUBLIC_URL}/${product.imageUrl}`}
+                        src={apiClient.getImageUrl(product.imageUrl)}
                         alt={name}
                         className="w-full h-full"
                     />

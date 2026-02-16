@@ -1,5 +1,6 @@
 import { BackendCartItemFetch, useCart } from "@/context/CartContext";
 import React from "react";
+import {apiClient} from "@/services/api-client";
 
 type QuantityProps = {
     quantity: number;
@@ -14,7 +15,7 @@ export default function CartItem({ quantity, setQuantity, item }: QuantityProps)
         <section className="flex items-start gap-6 py-4 group">
             <div className="w-[150px] h-[150px] bg-gray-50 overflow-hidden">
                 <img
-                    src={`${process.env.NEXT_PUBLIC_URL}/${item.item.imageUrl}`}
+                    src={apiClient.getImageUrl(item.item.imageUrl)}
                     alt={item.item.name}
                     className="w-full h-full"
                 />

@@ -1,11 +1,11 @@
 "use client";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import Card from "@/components/Auth/Card";
-import { getCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { refresh } from "next/cache";
 import { useCart } from "@/context/CartContext";
+import { apiClient } from "@/services/api-client";
+import { OrderType } from "@/types/order.types";
 
 export default function Page() {
     const router = useRouter();
@@ -18,32 +18,19 @@ export default function Page() {
         e.preventDefault();
         if (!address) return alert("Podaj adres!");
 
-        const token = getCookie("access_token");
         setIsLoading(true);
 
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_URL}/api/v1/order`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    credentials: "include",
-                    body: JSON.stringify({ address: address }),
-                },
-            );
+            const response = await apiClient.post<OrderType>("/order", {
+                address: address
+            });
 
-            if (response.ok) {
-                const result = await response.json();
-
-                setOrderId(result.order.id);
-            } else {
-                console.error("Błąd przy tworzeniu zamówienia");
+            if (response?.order) {
+                setOrderId(response.order.id);
             }
         } catch (err) {
-            console.error("Błąd sieciowy:", err);
+            console.error("Błąd przy tworzeniu zamówienia:", err);
+            alert("Nie udało się złożyć zamówienia. Sprawdź czy koszyk nie jest pusty.");
         } finally {
             setIsLoading(false);
         }
@@ -52,33 +39,18 @@ export default function Page() {
     const confirmOrderHandler = async () => {
         if (!orderId) return;
 
-        const token = getCookie("access_token");
         setIsLoading(true);
 
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_URL}/api/v1/order/${orderId}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    credentials: "include",
-                },
-            );
+            await apiClient.patch(`/order/${orderId}`);
+            alert("Zamówienie zostało złożone pomyślnie!");
 
-            if (response.ok) {
-                const result = await response.json();
-                router.push("/");
-                alert("Zamówienie zostało złożone pomyślnie!");
-                await fetchCart();
-                router.refresh();
-            } else {
-                console.error("Błąd przy zatwierdzaniu zamówienia");
-            }
+            await fetchCart();
+            router.push("/");
+            router.refresh();
         } catch (err) {
-            console.error("Błąd sieciowy:", err);
+            console.error("Błąd przy zatwierdzaniu zamówienia:", err);
+            alert("Wystąpił błąd podczas potwierdzania zamówienia.");
         } finally {
             setIsLoading(false);
         }

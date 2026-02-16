@@ -3,7 +3,7 @@ import { z } from "zod";
 import { signUpSchema } from "@/schemas/signUpSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { apiClient } from "@/hooks/client"
+import { apiClient } from "@/services/api-client"
 
 export type SignUpData = z.infer<typeof signUpSchema>;
 
