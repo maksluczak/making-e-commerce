@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 
 const app = express();
-
+app.set("trust proxy", 1);
 app.use(
     helmet({
         crossOriginResourcePolicy: { policy: "cross-origin" },
@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use(
     cors({
         origin: [
-            "",
+            "https://making-online.vercel.app/",
             "http://localhost:3000"
         ],
         credentials: true,

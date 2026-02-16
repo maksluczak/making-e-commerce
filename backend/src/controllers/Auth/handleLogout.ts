@@ -33,6 +33,7 @@ export const handleLogout = async (req: Request, res: Response): Promise<Respons
         res.clearCookie("jwt", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
+            sameSite: "none"
         });
 
         return res.sendStatus(204);
