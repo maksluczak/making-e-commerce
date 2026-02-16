@@ -1,9 +1,8 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, {Suspense} from "react";
 import Image from "next/image";
 import LowerProductBar from "@/components/Navbar/LowerProductBar";
-import SearchBar from "@/components/Navbar/SearchBar";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 
@@ -114,7 +113,9 @@ export default function Navbar() {
                     )}
                 </div>
             </nav>
-            <LowerProductBar />
+            <Suspense fallback={null}>
+                <LowerProductBar />
+            </Suspense>
         </header>
     );
 }
