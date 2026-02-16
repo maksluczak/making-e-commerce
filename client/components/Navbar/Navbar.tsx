@@ -6,7 +6,6 @@ import LowerProductBar from "@/components/Navbar/LowerProductBar";
 import SearchBar from "@/components/Navbar/SearchBar";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
-import { is } from "zod/locales";
 
 export default function Navbar() {
     const { user, logout, isAuthenticated } = useAuth();

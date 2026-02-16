@@ -8,7 +8,6 @@ import {
 } from "react";
 import { ProductType } from "@/types/cart.types";
 import { getCookie } from "cookies-next";
-import { number } from "zod";
 
 interface BackendCartProductFetch extends Omit<ProductType, "variants"> {
     popularity: number;
