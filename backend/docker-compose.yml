@@ -5,6 +5,7 @@ services:
     environment:
       POSTGRES_USER: maksluczak
       POSTGRES_PASSWORD: S3cret
+      POSTGRES_DB: ecommerce
       PGDATA: /data/postgres
     volumes:
       - db:/data/postgres

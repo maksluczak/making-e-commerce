@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use(
     cors({
         origin: [
-            "https://making-online.vercel.app/",
+            "https://making-online.vercel.app",
             "http://localhost:3000"
         ],
         credentials: true,
@@ -26,7 +26,9 @@ app.use(
 );
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+if (process.env.NODE_ENV !== "production") {
+    app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
 app.use("/api/v1", router);
 
 export default app;

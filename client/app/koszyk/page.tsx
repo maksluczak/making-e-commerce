@@ -1,6 +1,5 @@
 "use client";
-import React, { useState } from "react";
-import CartItemQuantity from "@/components/Cart/CartItemQuantity";
+import React from "react";
 import CartItem from "@/components/Cart/CartItem";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
