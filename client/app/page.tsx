@@ -25,9 +25,9 @@ export default async function Home({ searchParams }: {
     const items = await fetchProducts(category as string | undefined);
 
     return (
-        <main>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-items-center items-center gap-12 min-h-screen pt-[20px] xl:pt-0">
-                {items && items.length > 0 ? (
+        <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-items-center items-start gap-12 pt-[50px]">
+            {items && items.length > 0 ? (
                     items.map((item: ProductType) => (
                         <ProductCard key={item.id} product={item} />
                     ))
@@ -35,6 +35,6 @@ export default async function Home({ searchParams }: {
                     <p className="col-span-full text-center py-10">Nie znaleziono produktów.</p>
                 )}
             </div>
-        </main>
+        </>
     );
 }

@@ -10,8 +10,8 @@ export default function Navbar() {
     const { user, logout, isAuthenticated } = useAuth();
     const { itemsCount } = useCart();
     return (
-        <header className="fixed w-full z-20 top-0 start-0 bg-white border-b border-default">
-            <nav className="max-w-screen-xl flex items-center justify-between mx-auto p-4 relative">
+        <header className="sticky top-0 z-50 w-full bg-white border-b border-default">
+            <nav className="h-20 max-w-screen-xl flex items-center justify-between mx-auto px-4 relative">
                 <div className="flex-1 flex justify-start">
                     {/* <button className="p-2 hover:bg-gray-100 rounded-lg">
             <svg

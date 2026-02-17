@@ -33,7 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <AuthProvider>
             <CartProvider>
                 <Navbar />
-                <main className="flex-grow pt-[200px] mb-5 xl:mb-0">
+                <main className="flex-grow">
                     {children}
                 </main>
                 <Footer />
