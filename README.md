@@ -16,12 +16,12 @@ Making E-commerce is a comprehensive project focused on solving core retail logi
 
 ## Tech Stack
 
-### Frontend (The Storefront)
+### Frontend
 * **Next.js** – Optimized routing and server-side rendering.
 * **Tailwind CSS** – Modern, responsive UI design.
 * **Context API** – Efficient state management for cart and user sessions.
 
-### Backend (The Core)
+### Backend
 * **Node.js & Express** – High-performance API architecture.
 * **TypeScript** – Full-stack type safety to catch errors during development.
 * **Prisma ORM** – Type-safe database client for complex relational queries.
