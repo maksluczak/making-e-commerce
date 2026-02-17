@@ -32,8 +32,15 @@ export default async function Home({ searchParams }: {
                         <ProductCard key={item.id} product={item} />
                     ))
                 ) : (
-                    <p className="col-span-full text-center py-10">Nie znaleziono produktów.</p>
-                )}
+                    <div className="col-span-full flex flex-col items-center justify-center text-center py-32">
+                        <h1 className="text-6xl font-light tracking-widest text-gray-900">
+                            BRAK PRODUKTÓW
+                        </h1>
+                        <p className="mt-6 text-sm uppercase tracking-[0.3em] text-gray-500">
+                            Nie znaleziono produktów spełniających wybrane kryteria
+                        </p>
+                    </div>
+            )}
             </div>
         </>
     );

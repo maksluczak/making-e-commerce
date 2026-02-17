@@ -6,9 +6,9 @@ import { apiClient } from "@/services/api-client";
 export default function ProductCard({ product }: { product: ProductType }) {
     return (
         <div className="max-w-2xs bg-white border border-black flex flex-col">
-            <div className="h-60 overflow-hidden flex items-center justify-center border-b border-black">
+            <div className="w-full h-80 flex items-center justify-center overflow-hidden border-b border-black">
                 <img
-                    className="block h-full"
+                    className="max-w-full max-h-full object-contain"
                     src={apiClient.getImageUrl(product.imageUrl)}
                     alt={product.name}
                 />
